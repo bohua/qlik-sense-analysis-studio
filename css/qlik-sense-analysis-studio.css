@@ -1,0 +1,57 @@
+.qas-container{
+	display: flex;
+	height: 99%; 
+	position: relative; 
+	overflow: auto; 
+	background: #eeeeee; 
+	border:solid 1px;
+}
+
+.qas-canvas{
+	width: calc(100% - 280px);
+	height: 100%;
+}
+
+.qas-assets-header-dimension {
+	height: 37px;
+    border-left: 2px solid #2980B9;
+
+}
+
+.qas-assets-header-measure {
+	height: 37px;
+	border-left: 2px solid #16A085;
+}
+
+.qas-assets-item {
+	display: flex;
+	margin: 5px;
+	padding: 2px;
+    border: 1px solid #a8a8a8;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+}
+
+.qas-assets-item.qas-item-type-text {
+	background: #2471A3
+}
+.qas-assets-item.qas-item-type-key {
+	background: #D4AC0D
+}
+.qas-assets-item.qas-item-type-map {
+	background: #7D3C98
+}
+.qas-assets-item.qas-item-type-time {
+	background: #CB4335
+}
+.qas-assets-item.qas-item-type-measure {
+	background: #17A589
+}
+.qas-assets-item .qas-assets-item-icon {
+	font-size: 12px;
+}
+
+.qas-assets-item .qas-assets-item-text {
+	font-size: 14px;
+}
