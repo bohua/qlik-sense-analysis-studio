@@ -1,120 +1,131 @@
 <div qv-extension="qas" class="qas-container">
-	<div class="" style="height:100%; width:200px; border-right: 1px solid #D9D9D9;">
-		<div class="qui-toolsframe qv-has-tab-row" id="assets-tab-container"  style="height:100%; border-right: 1px solid #D9D9D9;" >
-			
-			<header id="toolbox-header">
-				<div class="name-container">
-					<h1 class="toolbox-tab-name">Qlik Studio</h1>
-					<button class="collapse-button" tabindex="-1" q-title-translation="Common.Close" x-click="assets.closeActiveTab()" title="Close">
+    <div class="" style="height:100%; width:200px; border-right: 1px solid #D9D9D9;">
+        <div class="qui-toolsframe qv-has-tab-row" id="assets-tab-container" style="height:100%; border-right: 1px solid #D9D9D9;">
+
+            <header id="toolbox-header">
+                <div class="name-container">
+                    <h1 class="toolbox-tab-name">Qlik Studio</h1>
+                    <button class="collapse-button" tabindex="-1" q-title-translation="Common.Close" x-click="assets.closeActiveTab()" title="Close">
 					<span class="lui-fade-button__icon  lui-icon lui-icon--search"></span>
 					</button>
-				</div>
-				<div ng-show="status.search">
-					<div class="assets-search-panel">
-						<div class="frame lui-bg-inverse">
-							<div class="lui-search lui-search--inverse">
-								<span class="lui-search__search-icon"></span>
-								<input class="lui-search__input" maxlength="255" spellcheck="false" type="text" placeholder="Search">
-								<span class="asset-search-panel-clear-search lui-search__clear-icon x-hide" x-click="onClear();" title="Clear"></span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div  style="border-bottom: 1px solid #999; padding: 0px 5PX 5PX 5PX;">
-					<div>
-						<select class="lui-select lui-select--inverse">
+                </div>
+                <div ng-show="status.search">
+                    <div class="assets-search-panel">
+                        <div class="frame lui-bg-inverse">
+                            <div class="lui-search lui-search--inverse">
+                                <span class="lui-search__search-icon"></span>
+                                <input class="lui-search__input" maxlength="255" spellcheck="false" type="text" placeholder="Search">
+                                <span class="asset-search-panel-clear-search lui-search__clear-icon x-hide" x-click="onClear();" title="Clear"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="border-bottom: 1px solid #999; padding: 0px 5PX 5PX 5PX;">
+                    <div>
+                        <select class="lui-select lui-select--inverse">
 							<option value="All" q-translation="Common.All.Tables">All tables</option>
 							<option value="airline">airline</option>
 							<option value="Result">Result</option>
 						</select>
-					</div>
-				</div>
-			</header>
-			<div class="tab-items-container" style="width:200px";>
-				<div class="assets-tab">
-					<section class="qui-toolssectionframe ui-accordion ui-widget ui-helper-reset" style="height: 100%">
-						<header class="ui-accordion-header ui-corner-top ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active">
-							<div class="qas-assets-header-dimension"></div>
-							<div class="header-content">
-								<h2 class="section-name" q-translation="Common.Dimensions">Dimensions</h2>
-							</div>
-						</header>
-						<div class="assets-section-items ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content ui-accordion-content-active" style="height: calc(50% - 73px); overflow: auto;">
-							<ul>
-								<li ng-repeat="item in qDimensionList" class="qas-assets-item" ng-class="{'qas-item-type-text': item.qType=='dimension' || item.qType=='uncertain', 'qas-item-type-key': item.qType=='key', 'qas-item-type-map': item.qType=='map', 'qas-item-type-time': item.qType=='timestamp'}">
-									<div class="lui-icon lui-list__aside qas-assets-item-icon" ng-class="{'icon-text-image': item.qType=='dimension' || item.qType=='uncertain', 'lui-icon--key': item.qType=='key', 'icon-map': item.qType=='map', 'icon-date': item.qType=='timestamp'}"></div>
-									<div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
-										<span>{{item.qName}}</span>
-									</div>
-								</li>
-							</ul>
-						</div>
-						
-						<header class="ui-accordion-header ui-corner-top ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active">
-							<div class="qas-assets-header-measure"></div>
-							<div class="header-content">
-								<h2 class="section-name" q-translation="Common.Measures">Measures</h2>
-							</div>
-						</header>
-						<div class="assets-section-items ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content ui-accordion-content-active" style="height: calc(50% - 74px); overflow: auto;">
-							<ul>
-								<li ng-repeat="item in qMeasureList" class="qas-assets-item qas-item-type-measure">
-									<div class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--kpi"></div>
-									<div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
-										<span>{{item.qName}}</span>
-									</div>
-								</li>
-							</ul>
-						</div>
-					</section>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="qas-canvas">
-		<div class="qas-config-bar">
-			<div class="qas-config-dimension">
-				<span class="qas-config-header">Dim:</span>
-				<li class="qas-assets-item qas-item-type-text in-tool-bar">
-					<div class="lui-icon lui-list__aside qas-assets-item-icon icon-text-image"></div>
-					<div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
-						<span class="ng-binding">Item Count</span>
-					</div>
-					<div class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
-				</li>
-			</div>
-			<div class="qas-config-measure">
-				<span class="qas-config-header">Msr:</span>
-				<li class="qas-assets-item qas-item-type-measure in-tool-bar">
-					<div class="lui-list__aside qas-assets-item-icon">
-						SUM
-					</div>
-					<div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
-						<span>YTD Sales Amount</span>
-					</div>
-					<div class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
-				</li>
-			</div>
-		</div>
-	</div>
-	<div class="qv-panel-properties" style="height:100%; width: 50px; max-width: 50px; min-width: 50px">
-		<div class="property-header" style="height: 72px; padding-top: 18px;">
-			<div class="header-wrapper">
-				<div class="type" style="padding: 4px 7px;">
-					<span class="type-icon lui-icon lui-icon--sheet"></span>
-				</div>
-				<div class="title"></div>
-			</div>
-		</div>
-		<div class="property-body">
-			<img src="../extensions/qlik-sense-analysis-studio/images/grid-chart.png" class="qas-chart-img"/>
-			<img src="../extensions/qlik-sense-analysis-studio/images/bar-chart.png" class="qas-chart-img"/>
-			<img src="../extensions/qlik-sense-analysis-studio/images/column-chart.png" class="qas-chart-img"/>
-			<img src="../extensions/qlik-sense-analysis-studio/images/line-chart.png" class="qas-chart-img"/>
-			<img src="../extensions/qlik-sense-analysis-studio/images/area-chart.png" class="qas-chart-img"/>
-			<img src="../extensions/qlik-sense-analysis-studio/images/pie-chart.png" class="qas-chart-img"/>
-			<img src="../extensions/qlik-sense-analysis-studio/images/combo-chart.png" class="qas-chart-img"/>
-			<img src="../extensions/qlik-sense-analysis-studio/images/stack-bar-chart.png" class="qas-chart-img"/>
-		</div>
-	</div>
+                    </div>
+                </div>
+            </header>
+            <div class="tab-items-container" style="width:200px" ;>
+                <div class="assets-tab">
+                    <section class="qui-toolssectionframe ui-accordion ui-widget ui-helper-reset" style="height: 100%">
+                        <header class="ui-accordion-header ui-corner-top ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active">
+                            <div class="qas-assets-header-dimension"></div>
+                            <div class="header-content">
+                                <h2 class="section-name" q-translation="Common.Dimensions">Dimensions</h2>
+                            </div>
+                        </header>
+                        <div class="assets-section-items ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content ui-accordion-content-active"
+                            style="height: calc(50% - 73px); overflow: auto;">
+                            <ul>
+                                <li ng-repeat="item in model.qDimensionList"
+                                    ng-if="!methods.dimensionSelected(item)"
+                                    ng-click="methods.selectDimension(item)"
+                                    class="qas-assets-item"
+                                    ng-class="{'qas-item-type-text': item.qType=='dimension' || item.qType=='uncertain', 'qas-item-type-key': item.qType=='key', 'qas-item-type-map': item.qType=='map', 'qas-item-type-time': item.qType=='timestamp'}"
+                                >
+                                    <div class="lui-icon lui-list__aside qas-assets-item-icon" ng-class="{'icon-text-image': item.qType=='dimension' || item.qType=='uncertain', 'lui-icon--key': item.qType=='key', 'icon-map': item.qType=='map', 'icon-date': item.qType=='timestamp'}"></div>
+                                    <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
+                                        <span>{{item.qName}}</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <header class="ui-accordion-header ui-corner-top ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active">
+                            <div class="qas-assets-header-measure"></div>
+                            <div class="header-content">
+                                <h2 class="section-name" q-translation="Common.Measures">Measures</h2>
+                            </div>
+                        </header>
+                        <div class="assets-section-items ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content ui-accordion-content-active"
+                            style="height: calc(50% - 74px); overflow: auto;">
+                            <ul>
+                                <li ng-repeat="item in model.qMeasureList"
+                                    ng-if="!methods.measureSelected(item)"
+                                    ng-click="methods.selectMeasure(item)"
+                                    class="qas-assets-item qas-item-type-measure"
+                                >
+                                    <div class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--kpi"></div>
+                                    <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
+                                        <span>{{item.qName}}</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="qas-canvas">
+        <div class="qas-config-bar">
+            <div class="qas-config-dimension">
+                <span class="qas-config-header">Dim:</span>
+                <li ng-repeat="selectedDimension in model.selectedDimensions" class="qas-assets-item qas-item-type-text in-tool-bar">
+                    <div class="lui-icon lui-list__aside qas-assets-item-icon icon-text-image"></div>
+                    <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
+                        <span class="ng-binding">{{selectedDimension.qName}}</span>
+                    </div>
+                    <div class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
+                </li>
+            </div>
+            <div class="qas-config-measure">
+                <span class="qas-config-header">Msr:</span>
+                <li ng-repeat="selectedMeasure in model.selectedMeasures" class="qas-assets-item qas-item-type-measure in-tool-bar">
+                    <div class="lui-list__aside qas-assets-item-icon">
+                        SUM
+                    </div>
+                    <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
+                        <span>{{selectedMeasure.qName}}</span>
+                    </div>
+                    <div class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
+                </li>
+            </div>
+        </div>
+    </div>
+    <div class="qv-panel-properties" style="height:100%; width: 50px; max-width: 50px; min-width: 50px">
+        <div class="property-header" style="height: 72px; padding-top: 18px;">
+            <div class="header-wrapper">
+                <div class="type" style="padding: 4px 7px;">
+                    <span class="type-icon lui-icon lui-icon--sheet"></span>
+                </div>
+                <div class="title"></div>
+            </div>
+        </div>
+        <div class="property-body">
+            <img src="../extensions/qlik-sense-analysis-studio/images/grid-chart.png" class="qas-chart-img" />
+            <img src="../extensions/qlik-sense-analysis-studio/images/bar-chart.png" class="qas-chart-img" />
+            <img src="../extensions/qlik-sense-analysis-studio/images/column-chart.png" class="qas-chart-img" />
+            <img src="../extensions/qlik-sense-analysis-studio/images/line-chart.png" class="qas-chart-img" />
+            <img src="../extensions/qlik-sense-analysis-studio/images/area-chart.png" class="qas-chart-img" />
+            <img src="../extensions/qlik-sense-analysis-studio/images/pie-chart.png" class="qas-chart-img" />
+            <img src="../extensions/qlik-sense-analysis-studio/images/combo-chart.png" class="qas-chart-img" />
+            <img src="../extensions/qlik-sense-analysis-studio/images/stack-bar-chart.png" class="qas-chart-img" />
+        </div>
+    </div>
 </div>
