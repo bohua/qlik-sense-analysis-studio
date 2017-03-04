@@ -86,24 +86,28 @@
         <div class="qas-config-bar">
             <div class="qas-config-dimension">
                 <span class="qas-config-header">Dim:</span>
-                <li ng-repeat="selectedDimension in model.selectedDimensions" class="qas-assets-item qas-item-type-text in-tool-bar">
+                <li ng-repeat="selectedDimension in model.selectedDimensions"
+                    class="qas-assets-item qas-item-type-text in-tool-bar"
+                >
                     <div class="lui-icon lui-list__aside qas-assets-item-icon icon-text-image"></div>
                     <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
                         <span class="ng-binding">{{selectedDimension.qName}}</span>
                     </div>
-                    <div class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
+                    <div ng-click="methods.removeSelectedDimension(selectedDimension)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
                 </li>
             </div>
             <div class="qas-config-measure">
                 <span class="qas-config-header">Msr:</span>
-                <li ng-repeat="selectedMeasure in model.selectedMeasures" class="qas-assets-item qas-item-type-measure in-tool-bar">
+                <li ng-repeat="selectedMeasure in model.selectedMeasures"
+                    class="qas-assets-item qas-item-type-measure in-tool-bar"
+                >
                     <div class="lui-list__aside qas-assets-item-icon">
                         SUM
                     </div>
                     <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
                         <span>{{selectedMeasure.qName}}</span>
                     </div>
-                    <div class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
+                    <div ng-click="methods.removeSelectedMeasure(selectedMeasure)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
                 </li>
             </div>
         </div>

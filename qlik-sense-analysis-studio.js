@@ -36,7 +36,9 @@ define([
                     selectMeasure: selectMeasure,
                     selectDimension: selectDimension,
                     dimensionSelected: dimensionSelected,
-                    measureSelected: measureSelected
+                    measureSelected: measureSelected,
+                    removeSelectedMeasure: removeSelectedMeasure,
+                    removeSelectedDimension: removeSelectedDimension
                 };
 
                 function selectMeasure(measure){
@@ -52,7 +54,21 @@ define([
                 }
                 
                 function measureSelected(measure){
-                    return $scope.model.selectedMeasures.findIndex(item => item.qName === meausre.qName) > -1;
+                    return $scope.model.selectedMeasures.findIndex(item => item.qName === measure.qName) > -1;
+                }
+
+                function removeSelectedMeasure(measure){
+                    var index = $scope.model.selectedMeasures.findIndex(item => item.qName === measure.qName);
+                    if(index > -1){
+                        $scope.model.selectedMeasures.splice(index, 1);
+                    }
+                }
+
+                function removeSelectedDimension(dimension){
+                    var index = $scope.model.selectedDimensions.findIndex(item => item.qName === dimension.qName);
+                    if(index > -1){
+                        $scope.model.selectedDimensions.splice(index, 1);
+                    }
                 }
 
                 // start point
