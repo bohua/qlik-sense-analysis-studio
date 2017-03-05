@@ -111,6 +111,23 @@
                 </li>
             </div>
         </div>
+        <div ng-if="model.data" class="qas-drawing-area">
+            <table>
+                <thead>
+                    <tr>
+                        <th ng-repeat="dimension in model.data.qDimensionInfo">{{dimension.qFallbackTitle}}</th>
+                        <th ng-repeat="measure in model.data.qMeasureInfo">{{measure.qFallbackTitle}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="row in model.data.qDataPages[0].qMatrix">
+                        <td ng-repeat="cell in row">
+                            {{cell.qText}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="qv-panel-properties" style="height:100%; width: 50px; max-width: 50px; min-width: 50px">
         <div class="property-header" style="height: 72px; padding-top: 18px;">

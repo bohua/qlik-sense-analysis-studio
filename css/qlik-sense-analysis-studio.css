@@ -14,6 +14,8 @@
 .qas-canvas {
     width: calc(100% - 250px);
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .qas-assets-header-dimension {
@@ -118,4 +120,11 @@
     border-radius: 0;
     margin-right: 10px;
     padding-right: 5px;
+}
+
+/*Css for drawing area*/
+.qas-drawing-area {
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: auto;
 }

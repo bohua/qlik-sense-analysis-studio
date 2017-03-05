@@ -2,17 +2,21 @@ define([
         "qlik",
         "underscore",
         "text!./template.html",
-        "text!./css/qlik-sense-analysis-studio.css"
+        "text!./css/qlik-sense-analysis-studio.css",
+        "./cube-helpers"
     ],
     function (
         qlik,
         _,
         template,
-        cssContent
+        cssContent,
+        CubeHelpers
     ) {
         $("<style>").html(cssContent).appendTo("head");
 
         var app = qlik.currApp();
+
+        console.log(qlik.Promise);
 
         return {
             template: template,
@@ -20,6 +24,9 @@ define([
                 snapshot: true,
                 export: true,
                 exportData: false
+            },
+            initialProperties: {
+                qHyperCubeDef: CubeHelpers.getInitialCubeDef()
             },
             paint: function () {
                 return qlik.Promise.resolve();
@@ -29,7 +36,8 @@ define([
                     qMeasureList: [],
                     qDimensionList: [],
                     selectedDimensions: [],
-                    selectedMeasures: []
+                    selectedMeasures: [],
+                    data: null
                 };
 
                 $scope.methods = {
@@ -43,10 +51,12 @@ define([
 
                 function selectMeasure(measure){
                     $scope.model.selectedMeasures.push(measure);
+                    reloadData($scope);
                 }
 
                 function selectDimension(dimension){
                     $scope.model.selectedDimensions.push(dimension);
+                    reloadData($scope);
                 }
 
                 function dimensionSelected(dimension){
@@ -61,6 +71,7 @@ define([
                     var index = $scope.model.selectedMeasures.findIndex(item => item.qName === measure.qName);
                     if(index > -1){
                         $scope.model.selectedMeasures.splice(index, 1);
+                        reloadData($scope);
                     }
                 }
 
@@ -68,6 +79,7 @@ define([
                     var index = $scope.model.selectedDimensions.findIndex(item => item.qName === dimension.qName);
                     if(index > -1){
                         $scope.model.selectedDimensions.splice(index, 1);
+                        reloadData($scope);
                     }
                 }
 
@@ -139,6 +151,17 @@ define([
             return "uncertain";
         }
 
-        
+        function reloadData($scope){
+            CubeHelpers
+                .refreshCube(app, $scope.model.selectedMeasures, $scope.model.selectedDimensions)
+                .then(function(reply){
+                    if(reply.qHyperCube.qDataPages && reply.qHyperCube.qDataPages.length > 0 && reply.qHyperCube.qDataPages[0].qMatrix && reply.qHyperCube.qDataPages[0].qMatrix.length > 0){
+                        $scope.model.data = reply.qHyperCube;
+                    }
+                    else{
+                        $scope.model.data = null;
+                    }
+                });
+        }
 
     });
