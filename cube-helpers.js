@@ -23,7 +23,8 @@ define([
                     cubeDef.qMeasures = selectedMeasures.map(measure => {
                         return {
                             qDef: {
-                                qDef: measure.qName
+                                qLabel: measure.qName,
+                                qDef: 'Sum(['+measure.qName+'])'
                             }
                         };
                     });
