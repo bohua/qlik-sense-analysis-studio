@@ -3,20 +3,20 @@ define([
         "underscore",
         "text!./template.html",
         "text!./css/qlik-sense-analysis-studio.css",
-        "./cube-helpers"
+        "./cube-helpers",
+        './engine-api-helper'
     ],
     function (
         qlik,
         _,
         template,
         cssContent,
-        CubeHelpers
+        CubeHelpers,
+        EngineApiHelper
     ) {
         $("<style>").html(cssContent).appendTo("head");
 
         var app = qlik.currApp();
-
-        console.log(qlik.Promise);
 
         return {
             template: template,
@@ -87,6 +87,26 @@ define([
                 getFieldList($scope);
                 console.log($scope);
                 console.log(app);
+
+                var socket = EngineApiHelper.connect(app.id);
+
+                $scope.$watch(function(){
+                    return socket.readyState;
+                }, function(newValue, oldValue){
+                    if(newValue || oldValue){
+                        EngineApiHelper
+                            .openDoc(app.model.handle)
+                            .then(function(){
+                                EngineApiHelper
+                                    .getFieldList()
+                                    .then(function(qLayout){
+                                        console.log(qLayout);
+                                    });
+                            });
+                    }
+                });
+
+                // EngineApiHelper.getFieldList();
             }]
         };
 
