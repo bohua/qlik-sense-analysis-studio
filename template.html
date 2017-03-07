@@ -24,8 +24,7 @@
                     <div>
                         <select class="lui-select lui-select--inverse">
 							<option value="All" q-translation="Common.All.Tables">All tables</option>
-							<option value="airline">airline</option>
-							<option value="Result">Result</option>
+							<option ng-repeat="table in model.qTableList" value="{{table}}">{{table}}</option>
 						</select>
                     </div>
                 </div>
