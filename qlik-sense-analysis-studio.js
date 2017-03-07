@@ -1,9 +1,9 @@
 define([
-        "qlik",
-        "underscore",
-        "text!./template.html",
-        "text!./css/qlik-sense-analysis-studio.css",
-        "./cube-helpers",
+        'qlik',
+        'underscore',
+        'text!./template.html',
+        'text!./css/qlik-sense-analysis-studio.css',
+        './cube-helpers',
         './engine-api-helper'
     ],
     function (
@@ -14,7 +14,7 @@ define([
         CubeHelpers,
         EngineApiHelper
     ) {
-        $("<style>").html(cssContent).appendTo("head");
+        $('<style>').html(cssContent).appendTo('head');
 
         var app = qlik.currApp();
 
@@ -33,11 +33,13 @@ define([
             },
             controller: ['$scope', function ($scope) {
                 $scope.model = {
+                    qTableList: [],
                     qMeasureList: [],
                     qDimensionList: [],
                     selectedDimensions: [],
                     selectedMeasures: [],
-                    data: null
+                    data: null,
+                    selectedTable: 'All'
                 };
 
                 $scope.methods = {
@@ -84,12 +86,11 @@ define([
                 }
 
                 // start point
-                getFieldList($scope);
+                // getFieldList($scope);
                 console.log($scope);
                 console.log(app);
 
                 var socket = EngineApiHelper.connect(app.id);
-
                 $scope.$watch(function(){
                     return socket.readyState;
                 }, function(newValue, oldValue){
@@ -101,6 +102,7 @@ define([
                                     .getFieldList()
                                     .then(function(qLayout){
                                         console.log(qLayout);
+                                        getInitConf($scope, qLayout);
                                     });
                             });
                     }
@@ -113,62 +115,67 @@ define([
         //------------------------------
         //Help functions
         //------------------------------
-        function getFieldList($scope) {
-            app.getList("FieldList", function (reply) {
-                $.each(reply.qFieldList.qItems, function (key, value) {
-                    var qType = categoryField(value);
-                    switch (qType) {
+        function getInitConf($scope, qLayout){
+            var tableList = [];
+            qLayout.qFieldList.qItems.forEach(item => {
+                if(item.qIsHidden === undefined && item.qSrcTables.length > 0){
+                    var qType = categoryField(item);
+                    switch(qType){
                         case null:
                             break;
-                        case "measure":
+                        case 'measure':
+                            tableList = [...tableList, ...item.qSrcTables];
                             $scope.model.qMeasureList.push({
-                                qName: value.qName,
-                                qType: qType
+                                qName: item.qName,
+                                qType: qType,
+                                qSrcTables: item.qSrcTables
                             });
                             break;
-
                         default:
+                        tableList = [...tableList, ...item.qSrcTables];
                             $scope.model.qDimensionList.push({
-                                qName: value.qName,
-                                qType: qType
+                                qName: item.qName,
+                                qType: qType,
+                                qSrcTables: item.qSrcTables
                             });
                             break;
                     }
-                });
+                }
             });
+            $scope.model.qTableList = _.uniq(tableList);
         }
 
         function categoryField(qField, showKeys) {
-            if (_.contains(qField.qTags, "$hidden") || _.contains(qField.qTags, "$system")) {
+            if (_.contains(qField.qTags, '$hidden') || _.contains(qField.qTags, '$system')) {
                 return null;
             }
 
-            if (_.contains(qField.qTags, "$key")) {
-                return "key";
+            if (_.contains(qField.qTags, '$key')) {
+                return 'key';
             }
 
-            if (_.contains(qField.qTags, "$timestamp")) {
-                return "timestamp";
+            if (_.contains(qField.qTags, '$timestamp')) {
+                return 'timestamp';
             }
 
-            if (_.contains(qField.qTags, "$geoname") || _.contains(qField.qTags, "$geomultipolygon") || _.contains(qField.qTags, "$geopoint")) {
-                return "map";
+            if (_.contains(qField.qTags, '$geoname') || _.contains(qField.qTags, '$geomultipolygon') || _.contains(qField.qTags, '$geopoint')) {
+                return 'map';
             }
 
-            if (_.contains(qField.qTags, "$text")) {
-                return "dimension";
+            if (_.contains(qField.qTags, '$text')) {
+                return 'dimension';
             }
 
-            if (_.contains(qField.qTags, "$numeric")) {
-                if (qField.qName.toLowerCase().indexOf("name") > -1) {
-                    return "dimension";
+            if (_.contains(qField.qTags, '$numeric')) {
+                if (qField.qName.toLowerCase().indexOf('name') > -1) {
+                    return 'dimension';
                 }
-                if (qField.qName.toLowerCase().indexOf("amount") > -1) {
-                    return "measure";
+                if (qField.qName.toLowerCase().indexOf('amount') > -1) {
+                    return 'measure';
                 }
             }
 
-            return "uncertain";
+            return 'uncertain';
         }
 
         function reloadData($scope){

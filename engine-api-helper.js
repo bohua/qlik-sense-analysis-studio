@@ -84,7 +84,7 @@ define([
 
                     socket.onmessage = function(e){
                         var response = JSON.parse(e.data);
-                        resolve(response.result);
+                        resolve(response.result.qLayout);
                     }
 
                     socket.send(JSON.stringify(getFieldListRequest));
