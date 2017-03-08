@@ -37,7 +37,11 @@
     color: #eee;
 }
 
-.qas-assets-item.qas-item-type-text {
+.qas-assets-item.qas-item-type-dimension {
+    background: #2471A3;
+}
+
+.qas-assets-item.qas-item-type-uncertain {
     background: #2471A3;
 }
 
@@ -49,7 +53,7 @@
     background: #7D3C98;
 }
 
-.qas-assets-item.qas-item-type-time {
+.qas-assets-item.qas-item-type-timestamp {
     background: #CB4335;
 }
 

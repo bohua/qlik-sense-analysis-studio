@@ -22,7 +22,7 @@
                 </div>
                 <div style="border-bottom: 1px solid #999; padding: 0px 5PX 5PX 5PX;">
                     <div>
-                        <select class="lui-select lui-select--inverse">
+                        <select class="lui-select lui-select--inverse" ng-model="model.selectedTable">
 							<option value="All" q-translation="Common.All.Tables">All tables</option>
 							<option ng-repeat="table in model.qTableList" value="{{table}}">{{table}}</option>
 						</select>
@@ -42,12 +42,11 @@
                             style="height: calc(50% - 38px); overflow: auto;">
                             <ul>
                                 <li ng-repeat="item in model.qDimensionList"
-                                    ng-if="!methods.dimensionSelected(item)"
-                                    ng-click="methods.selectDimension(item)"
-                                    class="qas-assets-item"
-                                    ng-class="{'qas-item-type-text': item.qType=='dimension' || item.qType=='uncertain', 'qas-item-type-key': item.qType=='key', 'qas-item-type-map': item.qType=='map', 'qas-item-type-time': item.qType=='timestamp'}"
+                                    ng-if="!item.selected && (model.selectedTable === 'All' || item.qSrcTables.indexOf(model.selectedTable) > -1)"
+                                    ng-click="methods.selectField(item)"
+                                    class="{{'qas-assets-item qas-item-type-'+item.qType}}"
                                 >
-                                    <div class="lui-icon lui-list__aside qas-assets-item-icon" ng-class="{'icon-text-image': item.qType=='dimension' || item.qType=='uncertain', 'lui-icon--key': item.qType=='key', 'icon-map': item.qType=='map', 'icon-date': item.qType=='timestamp'}"></div>
+                                    <div class="lui-icon lui-list__aside qas-assets-item-icon" ng-class="clsMethods.getFieldIcon(item)"></div>
                                     <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
                                         <span>{{item.qName}}</span>
                                     </div>
@@ -65,8 +64,8 @@
                             style="height: calc(50% - 38px); overflow: auto;">
                             <ul>
                                 <li ng-repeat="item in model.qMeasureList"
-                                    ng-if="!methods.measureSelected(item)"
-                                    ng-click="methods.selectMeasure(item)"
+                                    ng-if="!item.selected && (model.selectedTable === 'All' || item.qSrcTables.indexOf(model.selectedTable) > -1)"
+                                    ng-click="methods.selectField(item)"
                                     class="qas-assets-item qas-item-type-measure"
                                 >
                                     <div class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--kpi"></div>
@@ -85,19 +84,21 @@
         <div class="qas-config-bar">
             <div class="qas-config-dimension">
                 <span class="qas-config-header">Dim:</span>
-                <li ng-repeat="selectedDimension in model.selectedDimensions"
-                    class="qas-assets-item in-tool-bar" ng-class="{'qas-item-type-text': selectedDimension.qType=='dimension' || selectedDimension.qType=='uncertain', 'qas-item-type-key': selectedDimension.qType=='key', 'qas-item-type-map': selectedDimension.qType=='map', 'qas-item-type-time': selectedDimension.qType=='timestamp'}" >
-                    <div class="lui-icon lui-list__aside qas-assets-item-icon" ng-class="{'icon-text-image': selectedDimension.qType=='dimension' || selectedDimension.qType=='uncertain', 'lui-icon--key': selectedDimension.qType=='key', 'icon-map': selectedDimension.qType=='map', 'icon-date': selectedDimension.qType=='timestamp'}">
+                <li ng-repeat="selectedDimension in model.qDimensionList"
+                    ng-if="selectedDimension.selected === true"
+                    class="{{'qas-assets-item in-tool-bar qas-item-type-'+selectedDimension.qType}}">
+                    <div class="lui-icon lui-list__aside qas-assets-item-icon" ng-class="clsMethods.getFieldIcon(selectedDimension)">
                     </div>
                     <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
                         <span class="ng-binding">{{selectedDimension.qName}}</span>
                     </div>
-                    <div ng-click="methods.removeSelectedDimension(selectedDimension)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
+                    <div ng-click="methods.deselectField(selectedDimension)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
                 </li>
             </div>
             <div class="qas-config-measure">
                 <span class="qas-config-header">Msr:</span>
-                <li ng-repeat="selectedMeasure in model.selectedMeasures"
+                <li ng-repeat="selectedMeasure in model.qMeasureList"
+                    ng-if="selectedMeasure.selected === true"
                     class="qas-assets-item qas-item-type-measure in-tool-bar">
                     <div class="lui-list__aside qas-assets-item-icon">
                         SUM
@@ -105,7 +106,7 @@
                     <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
                         <span>{{selectedMeasure.qName}}</span>
                     </div>
-                    <div ng-click="methods.removeSelectedMeasure(selectedMeasure)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
+                    <div ng-click="methods.deselectField(selectedMeasure)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
                 </li>
             </div>
         </div>

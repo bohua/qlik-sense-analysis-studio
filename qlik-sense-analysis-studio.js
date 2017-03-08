@@ -42,51 +42,35 @@ define([
                     selectedTable: 'All'
                 };
 
-                $scope.methods = {
-                    selectMeasure: selectMeasure,
-                    selectDimension: selectDimension,
-                    dimensionSelected: dimensionSelected,
-                    measureSelected: measureSelected,
-                    removeSelectedMeasure: removeSelectedMeasure,
-                    removeSelectedDimension: removeSelectedDimension
+                $scope.clsMethods = {
+                    getFieldIcon: getFieldIcon
                 };
 
-                function selectMeasure(measure){
-                    $scope.model.selectedMeasures.push(measure);
+                $scope.methods = {
+                    selectField: selectField,
+                    deselectField: deselectField
+                };
+
+                function selectField(field){
+                    field.selected = true;
                     reloadData($scope);
                 }
 
-                function selectDimension(dimension){
-                    $scope.model.selectedDimensions.push(dimension);
+                function deselectField(field){
+                    field.selected = false;
                     reloadData($scope);
                 }
 
-                function dimensionSelected(dimension){
-                    return $scope.model.selectedDimensions.findIndex(item => item.qName === dimension.qName) > -1;
-                }
-                
-                function measureSelected(measure){
-                    return $scope.model.selectedMeasures.findIndex(item => item.qName === measure.qName) > -1;
-                }
-
-                function removeSelectedMeasure(measure){
-                    var index = $scope.model.selectedMeasures.findIndex(item => item.qName === measure.qName);
-                    if(index > -1){
-                        $scope.model.selectedMeasures.splice(index, 1);
-                        reloadData($scope);
-                    }
-                }
-
-                function removeSelectedDimension(dimension){
-                    var index = $scope.model.selectedDimensions.findIndex(item => item.qName === dimension.qName);
-                    if(index > -1){
-                        $scope.model.selectedDimensions.splice(index, 1);
-                        reloadData($scope);
-                    }
+                function getFieldIcon(field){
+                    return {
+                        'icon-text-image': field.qType=='dimension' || field.qType=='uncertain',
+                        'lui-icon--key': field.qType=='key',
+                        'icon-map': field.qType=='map',
+                        'icon-date': field.qType=='timestamp'
+                    };
                 }
 
                 // start point
-                // getFieldList($scope);
                 console.log($scope);
                 console.log(app);
 
@@ -107,8 +91,6 @@ define([
                             });
                     }
                 });
-
-                // EngineApiHelper.getFieldList();
             }]
         };
 
@@ -128,15 +110,17 @@ define([
                             $scope.model.qMeasureList.push({
                                 qName: item.qName,
                                 qType: qType,
-                                qSrcTables: item.qSrcTables
+                                qSrcTables: item.qSrcTables,
+                                selected: false
                             });
                             break;
                         default:
-                        tableList = [...tableList, ...item.qSrcTables];
+                            tableList = [...tableList, ...item.qSrcTables];
                             $scope.model.qDimensionList.push({
                                 qName: item.qName,
                                 qType: qType,
-                                qSrcTables: item.qSrcTables
+                                qSrcTables: item.qSrcTables,
+                                selected: false
                             });
                             break;
                     }
@@ -179,16 +163,33 @@ define([
         }
 
         function reloadData($scope){
-            CubeHelpers
-                .refreshCube(app, $scope.model.selectedMeasures, $scope.model.selectedDimensions)
-                .then(function(reply){
-                    if(reply.qHyperCube.qDataPages && reply.qHyperCube.qDataPages.length > 0 && reply.qHyperCube.qDataPages[0].qMatrix && reply.qHyperCube.qDataPages[0].qMatrix.length > 0){
-                        $scope.model.data = reply.qHyperCube;
-                    }
-                    else{
-                        $scope.model.data = null;
-                    }
-                });
+            var selectedMeasures = [];
+            $scope.model.qMeasureList.forEach(item => {
+                if(item.selected){
+                    selectedMeasures.push(item);
+                }
+            });
+            var selectedDimensions = [];
+            $scope.model.qDimensionList.forEach(item => {
+                if(item.selected){
+                    selectedDimensions.push(item);
+                }
+            });
+            if(selectedDimensions.length === 0 && selectedMeasures.length === 0){
+                $scope.model.data = null;
+            }
+            else{
+                CubeHelpers
+                    .refreshCube(app, selectedMeasures, selectedDimensions)
+                    .then(function(reply){
+                        if(reply.qHyperCube.qDataPages && reply.qHyperCube.qDataPages.length > 0 && reply.qHyperCube.qDataPages[0].qMatrix && reply.qHyperCube.qDataPages[0].qMatrix.length > 0){
+                            $scope.model.data = reply.qHyperCube;
+                        }
+                        else{
+                            $scope.model.data = null;
+                        }
+                    });
+            }
         }
 
     });

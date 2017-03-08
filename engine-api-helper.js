@@ -6,15 +6,6 @@ define([
     var appId;
     var requestId = 1;
     var handle = null;
-    // var requestId = 1;
-    // var requestSucceed = false;
-    // var appId = location.pathname.split('/app/')[1];
-    // if (location.hostname == 'localhost') {
-    //     socket = new WebSocket('ws://localhost:4848/app');
-    //     appId = unescape(appId).replace(/\\/g, '\\\\');
-    // } else {
-    //     socket = new WebSocket('wss://' + location.hostname + '/qrsData');
-    // }
 
     return {
         connect: function(id){
@@ -23,7 +14,6 @@ define([
             console.log(appId);
             if (location.hostname == 'localhost') {
                 socket = new WebSocket('ws://localhost:4848/app');
-                // appId = unescape(appId).replace(/\\/g, '\\\\');
             } else {
                 socket = new WebSocket('wss://' + location.hostname + '/qrsData');
             }
