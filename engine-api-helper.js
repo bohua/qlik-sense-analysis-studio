@@ -11,7 +11,6 @@ define([
         connect: function(id){
             var requestSucceed = false;
             appId = id;
-            console.log(appId);
             if (location.hostname == 'localhost') {
                 socket = new WebSocket('ws://localhost:4848/app');
             } else {

@@ -1,20 +1,27 @@
 define([
         'qlik',
+        'jquery',
         'underscore',
         'text!./template.html',
         'text!./css/qlik-sense-analysis-studio.css',
+        'text!./lib/handsontable/handsontable.full.css',
         './cube-helpers',
-        './engine-api-helper'
+        './engine-api-helper',
+        './lib/handsontable/handsontable.full',
     ],
     function (
         qlik,
+        $,
         _,
         template,
         cssContent,
+        handsontableCssContent,
         CubeHelpers,
-        EngineApiHelper
+        EngineApiHelper,
+        Handsontable
     ) {
         $('<style>').html(cssContent).appendTo('head');
+        $('<style>').html(handsontableCssContent).appendTo('head');
 
         var app = qlik.currApp();
 
@@ -41,6 +48,8 @@ define([
                     data: null,
                     selectedTable: 'All'
                 };
+
+                $scope.table = null;
 
                 $scope.clsMethods = {
                     getFieldIcon: getFieldIcon
@@ -164,29 +173,44 @@ define([
 
         function reloadData($scope){
             var selectedMeasures = [];
+            var data = [];
+            var header = [];
             $scope.model.qMeasureList.forEach(item => {
                 if(item.selected){
                     selectedMeasures.push(item);
+                    header.push(item.qName);
                 }
             });
             var selectedDimensions = [];
             $scope.model.qDimensionList.forEach(item => {
                 if(item.selected){
                     selectedDimensions.push(item);
+                    header.push(item.qName);
                 }
             });
             if(selectedDimensions.length === 0 && selectedMeasures.length === 0){
-                $scope.model.data = null;
+                $scope.model.data = data;
             }
             else{
+                data.push(header);
                 CubeHelpers
                     .refreshCube(app, selectedMeasures, selectedDimensions)
                     .then(function(reply){
                         if(reply.qHyperCube.qDataPages && reply.qHyperCube.qDataPages.length > 0 && reply.qHyperCube.qDataPages[0].qMatrix && reply.qHyperCube.qDataPages[0].qMatrix.length > 0){
                             $scope.model.data = reply.qHyperCube;
+                            reply.qHyperCube.qDataPages[0].qMatrix.forEach(record => {
+                                const row = record.map(item => item.qText);
+                                data.push(row);
+                            });
+                        }
+                        $scope.model.data = data;
+                        if($scope.table === null){
+                            $scope.table = new Handsontable(document.getElementById('analysis-studio-table'), {
+                                data: $scope.model.data
+                            });
                         }
                         else{
-                            $scope.model.data = null;
+                            $scope.table.loadData($scope.model.data);
                         }
                     });
             }
