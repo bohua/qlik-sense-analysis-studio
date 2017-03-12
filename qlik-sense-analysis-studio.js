@@ -194,7 +194,7 @@ define([
                 $scope.table.loadData([]);
             }
             else{
-                data.push(header);
+                var columns = TableHelpers.getColumns(selectedDimensions, selectedMeasures);
                 CubeHelpers
                     .refreshCube(app, selectedMeasures, selectedDimensions)
                     .then(function(reply){
@@ -205,12 +205,20 @@ define([
                             });
                         }
                         if($scope.table === null){
-                            $scope.table = TableHelpers.createTable(document.getElementById('analysis-studio-table'), data);
+                            $scope.table = TableHelpers.createTable(document.getElementById('analysis-studio-table'), header, columns, data);
                         }
                         else{
+                            $scope.table.updateSettings({
+                                columns: columns,
+                                colHeaders: header
+                            });
                             $scope.table.loadData(data);
                         }
                     }, function(){
+                        $scope.table.updateSettings({
+                            columns: columns,
+                            colHeaders: header
+                        });
                         $scope.table.reloadData(data);
                     });
             }
