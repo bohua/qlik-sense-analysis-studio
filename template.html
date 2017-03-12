@@ -84,33 +84,37 @@
         <div class="qas-config-bar">
             <div class="qas-config-dimension">
                 <span class="qas-config-header">Dim:</span>
-                <li ng-repeat="selectedDimension in model.qDimensionList"
-                    ng-if="selectedDimension.selected === true"
-                    class="{{'qas-assets-item in-tool-bar qas-item-type-'+selectedDimension.qType}}">
-                    <div class="lui-icon lui-list__aside qas-assets-item-icon" ng-class="clsMethods.getFieldIcon(selectedDimension)">
-                    </div>
-                    <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
-                        <span class="ng-binding">{{selectedDimension.qName}}</span>
-                    </div>
-                    <div ng-click="methods.deselectField(selectedDimension)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
-                </li>
+                <div class="qas-config-header-content">
+                    <li ng-repeat="selectedDimension in model.qDimensionList"
+                        ng-if="selectedDimension.selected === true"
+                        class="{{'qas-assets-item in-tool-bar qas-item-type-'+selectedDimension.qType}}">
+                        <div class="lui-icon lui-list__aside qas-assets-item-icon" ng-class="clsMethods.getFieldIcon(selectedDimension)">
+                        </div>
+                        <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
+                            <span class="ng-binding">{{selectedDimension.qName}}</span>
+                        </div>
+                        <div ng-click="methods.deselectField(selectedDimension)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
+                    </li>
+                </div>
             </div>
             <div class="qas-config-measure">
                 <span class="qas-config-header">Msr:</span>
-                <li ng-repeat="selectedMeasure in model.qMeasureList"
-                    ng-if="selectedMeasure.selected === true"
-                    class="qas-assets-item qas-item-type-measure in-tool-bar">
-                    <div class="lui-list__aside qas-assets-item-icon">
-                        SUM
-                    </div>
-                    <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
-                        <span>{{selectedMeasure.qName}}</span>
-                    </div>
-                    <div ng-click="methods.deselectField(selectedMeasure)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
-                </li>
+                <div class="qas-config-header-content">
+                    <li ng-repeat="selectedMeasure in model.qMeasureList"
+                        ng-if="selectedMeasure.selected === true"
+                        class="qas-assets-item qas-item-type-measure in-tool-bar">
+                        <div class="lui-list__aside qas-assets-item-icon">
+                            SUM
+                        </div>
+                        <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
+                            <span>{{selectedMeasure.qName}}</span>
+                        </div>
+                        <div ng-click="methods.deselectField(selectedMeasure)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
+                    </li>
+                </div>
             </div>
         </div>
-        <div id="analysis-studio-table" class="qas-drawing-area">
+        <div ng-if="model.visualType === 'table'" id="analysis-studio-table" class="qas-drawing-area">
             
         </div>
     </div>

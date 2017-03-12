@@ -8,6 +8,7 @@ define([
         './cube-helpers',
         './engine-api-helper',
         './lib/handsontable/handsontable.full',
+        './table-helpers'
     ],
     function (
         qlik,
@@ -18,7 +19,8 @@ define([
         handsontableCssContent,
         CubeHelpers,
         EngineApiHelper,
-        Handsontable
+        Handsontable,
+        TableHelpers
     ) {
         $('<style>').html(cssContent).appendTo('head');
         $('<style>').html(handsontableCssContent).appendTo('head');
@@ -45,8 +47,8 @@ define([
                     qDimensionList: [],
                     selectedDimensions: [],
                     selectedMeasures: [],
-                    data: null,
-                    selectedTable: 'All'
+                    selectedTable: 'All',
+                    visualType: 'table'
                 };
 
                 $scope.table = null;
@@ -173,23 +175,23 @@ define([
 
         function reloadData($scope){
             var selectedMeasures = [];
+            var selectedDimensions = [];
             var data = [];
             var header = [];
-            $scope.model.qMeasureList.forEach(item => {
-                if(item.selected){
-                    selectedMeasures.push(item);
-                    header.push(item.qName);
-                }
-            });
-            var selectedDimensions = [];
             $scope.model.qDimensionList.forEach(item => {
                 if(item.selected){
                     selectedDimensions.push(item);
                     header.push(item.qName);
                 }
             });
+            $scope.model.qMeasureList.forEach(item => {
+                if(item.selected){
+                    selectedMeasures.push(item);
+                    header.push(item.qName);
+                }
+            });
             if(selectedDimensions.length === 0 && selectedMeasures.length === 0){
-                $scope.model.data = data;
+                $scope.table.loadData([]);
             }
             else{
                 data.push(header);
@@ -197,21 +199,19 @@ define([
                     .refreshCube(app, selectedMeasures, selectedDimensions)
                     .then(function(reply){
                         if(reply.qHyperCube.qDataPages && reply.qHyperCube.qDataPages.length > 0 && reply.qHyperCube.qDataPages[0].qMatrix && reply.qHyperCube.qDataPages[0].qMatrix.length > 0){
-                            $scope.model.data = reply.qHyperCube;
                             reply.qHyperCube.qDataPages[0].qMatrix.forEach(record => {
                                 const row = record.map(item => item.qText);
                                 data.push(row);
                             });
                         }
-                        $scope.model.data = data;
                         if($scope.table === null){
-                            $scope.table = new Handsontable(document.getElementById('analysis-studio-table'), {
-                                data: $scope.model.data
-                            });
+                            $scope.table = TableHelpers.createTable(document.getElementById('analysis-studio-table'), data);
                         }
                         else{
-                            $scope.table.loadData($scope.model.data);
+                            $scope.table.loadData(data);
                         }
+                    }, function(){
+                        $scope.table.reloadData(data);
                     });
             }
         }
