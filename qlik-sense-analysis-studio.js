@@ -118,26 +118,25 @@ define([
                             break;
                         case 'measure':
                             tableList = [...tableList, ...item.qSrcTables];
-                            $scope.model.qMeasureList.push({
-                                qName: item.qName,
-                                qType: qType,
-                                qSrcTables: item.qSrcTables,
-                                selected: false
-                            });
+                            $scope.model.qMeasureList.push(createFieldForAnalysis(item, qType));
                             break;
                         default:
                             tableList = [...tableList, ...item.qSrcTables];
-                            $scope.model.qDimensionList.push({
-                                qName: item.qName,
-                                qType: qType,
-                                qSrcTables: item.qSrcTables,
-                                selected: false
-                            });
+                            $scope.model.qDimensionList.push(createFieldForAnalysis(item, qType));
                             break;
                     }
                 }
             });
             $scope.model.qTableList = _.uniq(tableList);
+        }
+
+        function createFieldForAnalysis(field, qType){
+            return {
+                qName: field.qName,
+                qType: qType,
+                qSrcTables: field.qSrcTables,
+                selected: false
+            };
         }
 
         function categoryField(qField, showKeys) {
@@ -191,10 +190,13 @@ define([
                 }
             });
             if(selectedDimensions.length === 0 && selectedMeasures.length === 0){
+                $scope.table.updateSettings({
+                    columns: [],
+                    colHeaders: []
+                });
                 $scope.table.loadData([]);
             }
             else{
-                var columns = TableHelpers.getColumns(selectedDimensions, selectedMeasures);
                 CubeHelpers
                     .refreshCube(app, selectedMeasures, selectedDimensions)
                     .then(function(reply){
@@ -205,20 +207,14 @@ define([
                             });
                         }
                         if($scope.table === null){
-                            $scope.table = TableHelpers.createTable(document.getElementById('analysis-studio-table'), header, columns, data);
+                            $scope.table = TableHelpers.createTable(document.getElementById('analysis-studio-table'), header, selectedDimensions, selectedMeasures, data);
                         }
                         else{
-                            $scope.table.updateSettings({
-                                columns: columns,
-                                colHeaders: header
-                            });
+                            $scope.table.updateSettings(TableHelpers.getTableSettings($scope.table.getSettings().colHeaders, selectedDimensions, selectedMeasures));
                             $scope.table.loadData(data);
                         }
                     }, function(){
-                        $scope.table.updateSettings({
-                            columns: columns,
-                            colHeaders: header
-                        });
+                        $scope.table.updateSettings(TableHelpers.getTableSettings($scope.table.getSettings().colHeaders, selectedDimensions, selectedMeasures));
                         $scope.table.reloadData(data);
                     });
             }

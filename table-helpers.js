@@ -2,34 +2,52 @@ define([
     './lib/handsontable/handsontable.full'
 ], function (Handsontable) {
     'use strict';
-
     return {
-        createTable: function(element, header, columns, data){
+        createTable: function(element, header, selectedDimensions, selectedMeasures, data){
+            var tableSettings = this.getTableSettings(header, selectedDimensions, selectedMeasures);
             var table = new Handsontable(element, {
                 data: data,
                 columnSorting: true,
                 sortIndicator: true,
-                colHeaders: header,
+                colHeaders: tableSettings.colHeaders,
                 rowHeaders: true,
                 manualColumnResize: true,
-                columns: columns
+                manualColumnMove: true,
+                columns: tableSettings.columns
             });
             return table;
         },
 
-        getColumns: function(selectedDimensions, selectedMeasures){
-            var columns = [];
+        getTableSettings: function(header, selectedDimensions, selectedMeasures){
+            var dataColumns = {};
+            var dataIndex = 0;
             selectedDimensions.forEach(field => {
-                columns.push({
-                    type: 'text'
-                });
+                dataColumns[field.qName] = {
+                    type: 'text',
+                    data: dataIndex
+                };
+                dataIndex++;
+                if(header.indexOf(field.qName) === -1){
+                    header.push(field.qName);
+                }
             });
             selectedMeasures.forEach(field => {
-                columns.push({
-                    type: 'numeric'
-                });
+                dataColumns[field.qName] = {
+                    type: 'numeric',
+                    data: dataIndex
+                };
+                dataIndex++;
+                if(header.indexOf(field.qName) === -1){
+                    header.push(field.qName);
+                }
             });
-            return columns;
+            var columns = header.map(column => {
+                return dataColumns[column];
+            });
+            return {
+                columns:columns,
+                colHeaders: header
+            };
         }
     };
 });
