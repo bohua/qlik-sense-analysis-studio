@@ -137,7 +137,17 @@
 
 /*Css for drawing area*/
 .qas-drawing-area {
+    height: calc(100% - 72px);
     flex-grow: 1;
     flex-shrink: 1;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.qas-chart-area {
+    width: 50%;
+    height: 100%;
 }
