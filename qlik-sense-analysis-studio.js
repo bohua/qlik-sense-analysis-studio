@@ -91,11 +91,11 @@ define([
                 }
 
                 function switchChartType(type){
-                    $scope.model.visualType = type;
+                    $scope.model.chartType = type;
                     var selectedDimensions = getSelectedDimensions($scope);
                     var selectedMeasures = getSelectedMeasures($scope);
                     if(ChartHelpers.isValidChartType(
-                        $scope.chartType,
+                        $scope.model.chartType,
                         selectedDimensions,
                         selectedMeasures)
                     ){
@@ -103,10 +103,10 @@ define([
                             $scope.chart = ChartHelpers
                                 .refreshChart(
                                     $scope.chart,
-                                    $scope.chartType,
+                                    $scope.model.chartType,
                                     selectedDimensions,
                                     selectedMeasures,
-                                    $scope.data
+                                    $scope.model.data
                                 );
                         }
                     }
@@ -224,7 +224,7 @@ define([
         }
 
         function reloadData($scope){
-            $scope.data = [];
+            $scope.model.data = [];
             var selectedMeasures = getSelectedMeasures($scope);
             var selectedDimensions = getSelectedDimensions($scope);
             if(selectedDimensions.length === 0 && selectedMeasures.length === 0){
@@ -232,7 +232,7 @@ define([
                     columns: [],
                     colHeaders: []
                 });
-                TableHelpers.loadData($scope.table, $scope.data);
+                TableHelpers.loadData($scope.table, $scope.model.data);
             }
             else{
                 CubeHelpers
@@ -243,16 +243,15 @@ define([
                             && reply.qHyperCube.qDataPages[0].qMatrix
                             && reply.qHyperCube.qDataPages[0].qMatrix.length > 0
                         ){
-                            $scope.data = reply.qHyperCube.qDataPages[0].qMatrix;
+                            $scope.model.data = reply.qHyperCube.qDataPages[0].qMatrix;
                         }
-                        $scope.model.dataForChart = dataForChart;
                         if($scope.table === null){
                             $scope.table = TableHelpers
                                 .createTable(
                                     document.getElementById('analysis-studio-table'),
                                     selectedDimensions,
                                     selectedMeasures,
-                                    $scope.data
+                                    $scope.model.data
                                 );
                         }
                         else{
@@ -263,21 +262,31 @@ define([
                                     selectedMeasures
                                 )
                             );
-                            $scope.table.loadData($scope.data);
+                            TableHelpers.loadData($scope.table, $scope.model.data);
                         }
 
                         if(ChartHelpers.isValidChartType(
-                            $scope.chartType,
+                            $scope.model.chartType,
                             selectedDimensions,
                             selectedMeasures)
                         ){
                             if($scope.chart === null){
                                 $scope.chart = ChartHelpers
                                     .createChart(
-                                        $scope.chartType,
+                                        $scope.model.chartType,
                                         selectedDimensions,
                                         selectedMeasures,
-                                        $scope.data
+                                        $scope.model.data
+                                    );
+                            }
+                            else{
+                                $scope.chart = ChartHelpers
+                                    .refreshChart(
+                                        $scope.chart,
+                                        $scope.model.chartType,
+                                        selectedDimensions,
+                                        selectedMeasures,
+                                        $scope.model.data
                                     );
                             }
                         }

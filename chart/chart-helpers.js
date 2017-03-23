@@ -78,15 +78,17 @@ define([
     
     return {
         refreshChart: function(chart, chartType, selectedDimensions, selectedMeasures, rawData){
+            chart.destroy();
             var template = getOptionTemplate(chartType);
-            var data = formatData(rawData);
+            var data = formatData(rawData, selectedDimensions.length);
             var options = defaultFormatter(template, selectedDimensions, selectedMeasures, data);
-            chart.update(options);
+            console.log(options);
+            return window.Highcharts.chart('analysis-studio-chart', options);
         },
 
         createChart: function(chartType, selectedDimensions, selectedMeasures, rawData){
             var template = getOptionTemplate(chartType);
-            var data = formatData(rawData);
+            var data = formatData(rawData, selectedDimensions.length);
             var options = defaultFormatter(template, selectedDimensions, selectedMeasures, data);
             return window.Highcharts.chart('analysis-studio-chart', options);
         },

@@ -13,6 +13,7 @@ define([
                 const row = record.map(item => item.qText);
                 data.push(row);
             });
+            console.log(data);
             return data;
         }
     }
@@ -37,7 +38,9 @@ define([
         getTableSettings: function(header, selectedDimensions, selectedMeasures){
             var dataColumns = {};
             var dataIndex = 0;
+            var curHeaders = [];
             selectedDimensions.forEach(field => {
+                curHeaders.push(field.qName);
                 dataColumns[field.qName] = {
                     type: 'text',
                     data: dataIndex
@@ -48,6 +51,7 @@ define([
                 }
             });
             selectedMeasures.forEach(field => {
+                curHeaders.push(field.qName);
                 dataColumns[field.qName] = {
                     type: 'numeric',
                     data: dataIndex
@@ -56,6 +60,9 @@ define([
                 if(header.indexOf(field.qName) === -1){
                     header.push(field.qName);
                 }
+            });
+            header = header.filter(item => {
+               return curHeaders.indexOf(item) > -1; 
             });
             var columns = header.map(column => {
                 return dataColumns[column];
