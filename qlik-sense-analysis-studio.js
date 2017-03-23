@@ -9,6 +9,7 @@ define([
         './engine-api-helper',
         './lib/handsontable/handsontable.full',
         './table-helpers',
+        './chart/chart-helpers',
         './lib/highcharts/highcharts-custom'
     ],
     function (
@@ -21,7 +22,8 @@ define([
         CubeHelpers,
         EngineApiHelper,
         Handsontable,
-        TableHelpers
+        TableHelpers,
+        ChartHelpers
     ) {
         $('<style>').html(cssContent).appendTo('head');
         $('<style>').html(handsontableCssContent).appendTo('head');
@@ -49,11 +51,15 @@ define([
                     selectedDimensions: [],
                     selectedMeasures: [],
                     selectedTable: 'All',
-                    visualType: 'table'
+                    chartType: 'line',
+                    chartTypes: [
+                        'grid', 'bar', 'column', 'line', 'area', 'pie', 'combo', 'stack-bar'
+                    ],
+                    data: []
                 };
 
                 $scope.table = null;
-                $scope.graph = null;
+                $scope.chart = null;
 
                 $scope.clsMethods = {
                     getFieldIcon: getFieldIcon
@@ -61,7 +67,8 @@ define([
 
                 $scope.methods = {
                     selectField: selectField,
-                    deselectField: deselectField
+                    deselectField: deselectField,
+                    switchChartType: switchChartType
                 };
 
                 function selectField(field){
@@ -81,6 +88,28 @@ define([
                         'icon-map': field.qType=='map',
                         'icon-date': field.qType=='timestamp'
                     };
+                }
+
+                function switchChartType(type){
+                    $scope.model.visualType = type;
+                    var selectedDimensions = getSelectedDimensions($scope);
+                    var selectedMeasures = getSelectedMeasures($scope);
+                    if(ChartHelpers.isValidChartType(
+                        $scope.chartType,
+                        selectedDimensions,
+                        selectedMeasures)
+                    ){
+                        if($scope.chart !== null){
+                            $scope.chart = ChartHelpers
+                                .refreshChart(
+                                    $scope.chart,
+                                    $scope.chartType,
+                                    selectedDimensions,
+                                    selectedMeasures,
+                                    $scope.data
+                                );
+                        }
+                    }
                 }
 
                 // start point
@@ -174,91 +203,93 @@ define([
             return 'uncertain';
         }
 
-        function reloadData($scope){
-            if($scope.graph === null){
-                $scope.graph = window.Highcharts.chart('analysis-studio-graph', {
-                    title: {
-                        text: 'Solar Employment Growth by Sector, 2010-2016'
-                    },
-                    subtitle: {
-                        text: 'Source: thesolarfoundation.com'
-                    },
-                    yAxis: {
-                        title: {
-                            text: 'Number of Employees'
-                        }
-                    },
-                    legend: {
-                        layout: 'vertical',
-                        align: 'right',
-                        verticalAlign: 'middle'
-                    },
-                    plotOptions: {
-                        series: {
-                            pointStart: 2010
-                        }
-                    },
-                    series: [{
-                        name: 'Installation',
-                        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-                    }, {
-                        name: 'Manufacturing',
-                        data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-                    }, {
-                        name: 'Sales & Distribution',
-                        data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-                    }, {
-                        name: 'Project Development',
-                        data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-                    }, {
-                        name: 'Other',
-                        data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-                    }]
-                });
-            }
-            var selectedMeasures = [];
+        function getSelectedDimensions($scope){
             var selectedDimensions = [];
-            var data = [];
-            var header = [];
             $scope.model.qDimensionList.forEach(item => {
                 if(item.selected){
                     selectedDimensions.push(item);
-                    header.push(item.qName);
                 }
             });
+            return selectedDimensions;
+        }
+
+        function getSelectedMeasures($scope){
+            var selectedMeasures = [];
             $scope.model.qMeasureList.forEach(item => {
                 if(item.selected){
                     selectedMeasures.push(item);
-                    header.push(item.qName);
                 }
             });
+            return selectedMeasures;
+        }
+
+        function reloadData($scope){
+            $scope.data = [];
+            var selectedMeasures = getSelectedMeasures($scope);
+            var selectedDimensions = getSelectedDimensions($scope);
             if(selectedDimensions.length === 0 && selectedMeasures.length === 0){
                 $scope.table.updateSettings({
                     columns: [],
                     colHeaders: []
                 });
-                $scope.table.loadData([]);
+                TableHelpers.loadData($scope.table, $scope.data);
             }
             else{
                 CubeHelpers
                     .refreshCube(app, selectedMeasures, selectedDimensions)
                     .then(function(reply){
-                        if(reply.qHyperCube.qDataPages && reply.qHyperCube.qDataPages.length > 0 && reply.qHyperCube.qDataPages[0].qMatrix && reply.qHyperCube.qDataPages[0].qMatrix.length > 0){
-                            reply.qHyperCube.qDataPages[0].qMatrix.forEach(record => {
-                                const row = record.map(item => item.qText);
-                                data.push(row);
-                            });
+                        if(reply.qHyperCube.qDataPages
+                            && reply.qHyperCube.qDataPages.length > 0
+                            && reply.qHyperCube.qDataPages[0].qMatrix
+                            && reply.qHyperCube.qDataPages[0].qMatrix.length > 0
+                        ){
+                            $scope.data = reply.qHyperCube.qDataPages[0].qMatrix;
                         }
+                        $scope.model.dataForChart = dataForChart;
                         if($scope.table === null){
-                            $scope.table = TableHelpers.createTable(document.getElementById('analysis-studio-table'), header, selectedDimensions, selectedMeasures, data);
+                            $scope.table = TableHelpers
+                                .createTable(
+                                    document.getElementById('analysis-studio-table'),
+                                    selectedDimensions,
+                                    selectedMeasures,
+                                    $scope.data
+                                );
                         }
                         else{
-                            $scope.table.updateSettings(TableHelpers.getTableSettings($scope.table.getSettings().colHeaders, selectedDimensions, selectedMeasures));
-                            $scope.table.loadData(data);
+                            $scope.table.updateSettings(
+                                TableHelpers.getTableSettings(
+                                    $scope.table.getSettings().colHeaders,
+                                    selectedDimensions,
+                                    selectedMeasures
+                                )
+                            );
+                            $scope.table.loadData($scope.data);
+                        }
+
+                        if(ChartHelpers.isValidChartType(
+                            $scope.chartType,
+                            selectedDimensions,
+                            selectedMeasures)
+                        ){
+                            if($scope.chart === null){
+                                $scope.chart = ChartHelpers
+                                    .createChart(
+                                        $scope.chartType,
+                                        selectedDimensions,
+                                        selectedMeasures,
+                                        $scope.data
+                                    );
+                            }
                         }
                     }, function(){
-                        $scope.table.updateSettings(TableHelpers.getTableSettings($scope.table.getSettings().colHeaders, selectedDimensions, selectedMeasures));
-                        $scope.table.reloadData(data);
+                        $scope.table.updateSettings(
+                            TableHelpers.getTableSettings(
+                                $scope.table.getSettings().colHeaders,
+                                selectedDimensions,
+                                selectedMeasures
+                            )
+                        );
+                        $scope.table.reloadData([]);
                     });
             }
         }

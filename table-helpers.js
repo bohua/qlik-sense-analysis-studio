@@ -2,11 +2,27 @@ define([
     './lib/handsontable/handsontable.full'
 ], function (Handsontable) {
     'use strict';
+
+    function formatData(rawData){
+        if(rawData.length === 0){
+            return [];
+        }
+        else{
+            var data = [];
+            rawData.forEach(record => {
+                const row = record.map(item => item.qText);
+                data.push(row);
+            });
+            return data;
+        }
+    }
+    
     return {
-        createTable: function(element, header, selectedDimensions, selectedMeasures, data){
-            var tableSettings = this.getTableSettings(header, selectedDimensions, selectedMeasures);
+        createTable: function(element, selectedDimensions, selectedMeasures, rawData){
+            var headers = [...selectedDimensions, ...selectedMeasures].map(item => item.qName);
+            var tableSettings = this.getTableSettings(headers, selectedDimensions, selectedMeasures);
             var table = new Handsontable(element, {
-                data: data,
+                data: formatData(rawData),
                 columnSorting: true,
                 sortIndicator: true,
                 colHeaders: tableSettings.colHeaders,
@@ -48,6 +64,10 @@ define([
                 columns:columns,
                 colHeaders: header
             };
+        },
+
+        loadData: function(table, rawData){
+            table.loadData(formatData(rawData));
         }
     };
 });
