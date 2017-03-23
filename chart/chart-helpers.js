@@ -1,9 +1,9 @@
 define([
-    './formatters/line-formatter',
-    './formatters/area-formatter',
-    './formatters/bar-formatter',
-    './formatters/column-formatter'
-], function(LineFormatter, AreaFormatter, BarFormatter, ColumnFormatter){
+    './templates/line-template',
+    './templates/area-template',
+    './templates/bar-template',
+    './templates/column-template'
+], function(LineTemplate, AreaTemplate, BarTemplate, ColumnTemplate){
     'use strict';
 
     function formatData(rawData, dimensionNumber){
@@ -27,45 +27,67 @@ define([
         }
     }
     
-    function getOptions(chartType, selectedDimensions, selectedMeasures, data){
-        var formatter;
+    function getOptionTemplate(chartType){
+        var template;
         switch (chartType) {
             case 'line':
-                formatter = LineFormatter;
+                template = LineTemplate;
                 break;
             case 'area':
-                formatter = AreaFormatter;
+                template = AreaTemplate;
                 break;
             case 'bar':
-                formatter = BarFormatter;
+                template = BarTemplate;
                 break;
             case 'column':
-                formatter = ColumnFormatter;
+                template = ColumnTemplate;
                 break;
             default:
-                formatter = LineFormatter;
+                template = LineTemplate;
                 break;
         }
-        return formatter.getOptions(selectedDimensions, selectedMeasures, data);
+        return Object.assign({}, template);
     }
+
+    function defaultFormatter(template, selectedDimensions, selectedMeasures, data){
+        template.xAxis.title.text = selectedDimensions[0].qName;
+        var series = [];
+        var categories = [];
+
+        data.forEach(record => {
+            record.forEach((value, index) => {
+                if(index === 0){
+                    categories.push(value);
+                }
+                else{
+                    if(series[index - 1] === undefined){
+                        series[index - 1] = {
+                            name: selectedMeasures[index - 1].qName,
+                            data: []
+                        };
+                    }
+                    series[index - 1].data.push(value);
+                }
+            });
+        });
+        
+        template.xAxis.categories = categories;
+        template.series = series;
+        return template;
+    }
+    
     return {
         refreshChart: function(chart, chartType, selectedDimensions, selectedMeasures, rawData){
-            var options = getOptions(
-                chartType,
-                selectedDimensions,
-                selectedMeasures,
-                formatData(rawData)
-            );
+            var template = getOptionTemplate(chartType);
+            var data = formatData(rawData);
+            var options = defaultFormatter(template, selectedDimensions, selectedMeasures, data);
             chart.update(options);
         },
 
         createChart: function(chartType, selectedDimensions, selectedMeasures, rawData){
-            var options = getOptions(
-                chartType,
-                selectedDimensions,
-                selectedMeasures,
-                formatData(rawData)
-            );
+            var template = getOptionTemplate(chartType);
+            var data = formatData(rawData);
+            var options = defaultFormatter(template, selectedDimensions, selectedMeasures, data);
             return window.Highcharts.chart('analysis-studio-chart', options);
         },
 
