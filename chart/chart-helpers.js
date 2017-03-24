@@ -2,8 +2,9 @@ define([
     './templates/line-template',
     './templates/area-template',
     './templates/bar-template',
-    './templates/column-template'
-], function(LineTemplate, AreaTemplate, BarTemplate, ColumnTemplate){
+    './templates/column-template',
+    './templates/stack-bar-template'
+], function(LineTemplate, AreaTemplate, BarTemplate, ColumnTemplate, StackBarTemplate){
     'use strict';
 
     function formatData(rawData, dimensionNumber){
@@ -41,6 +42,9 @@ define([
                 break;
             case 'column':
                 template = ColumnTemplate;
+                break;
+            case 'stack-bar':
+                template = StackBarTemplate;
                 break;
             default:
                 template = LineTemplate;
@@ -82,7 +86,6 @@ define([
             var template = getOptionTemplate(chartType);
             var data = formatData(rawData, selectedDimensions.length);
             var options = defaultFormatter(template, selectedDimensions, selectedMeasures, data);
-            console.log(options);
             return window.Highcharts.chart('analysis-studio-chart', options);
         },
 
