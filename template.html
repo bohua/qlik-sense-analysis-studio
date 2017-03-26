@@ -130,9 +130,9 @@
         </div>
         <div class="property-body">
             <img ng-repeat="chartType in model.chartTypes" 
-                src="{{'../extensions/qlik-sense-analysis-studio/images/'+chartType+'-chart.png'}}"
+                src="{{'../extensions/qlik-sense-analysis-studio/images/'+chartType.icon+'-chart.png'}}"
                 class="qas-chart-img"
-                ng-click="methods.switchChartType(chartType)"
+                ng-click="methods.switchChartType(chartType.name)"
             />
         </div>
     </div>

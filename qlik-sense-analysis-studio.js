@@ -9,6 +9,7 @@ define([
         './engine-api-helper',
         './lib/handsontable/handsontable.full',
         './table-helpers',
+        './chart/chart-definitions',
         './chart/chart-helpers',
         './lib/highcharts/highcharts-custom'
     ],
@@ -23,6 +24,7 @@ define([
         EngineApiHelper,
         Handsontable,
         TableHelpers,
+        ChartDefs,
         ChartHelpers
     ) {
         $('<style>').html(cssContent).appendTo('head');
@@ -52,9 +54,7 @@ define([
                     selectedMeasures: [],
                     selectedTable: 'All',
                     chartType: 'line',
-                    chartTypes: [
-                        'grid', 'bar', 'column', 'line', 'area', 'pie', 'combo', 'stack-bar'
-                    ],
+                    chartTypes: ChartDefs.getChartList(),
                     data: []
                 };
 
