@@ -67,6 +67,14 @@ define([
         formatter: 'defaultFormatter',
         dimensions: [1, 1],
         measures: [1, 100]
+    }, {
+        name: 'sparkline',
+        display: 'Sparkline',
+        icon: 'stack-bar',
+        active: true,
+        formatter: 'sparklineFormatter',
+        dimensions: [2, 100],
+        measures: [1, 100]
     }];
     
     return {

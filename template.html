@@ -1,11 +1,20 @@
 <div qv-extension="qas" class="qas-container">
     <div class="" style="height:100%; width:200px; border-right: 1px solid #D9D9D9;">
-        <div class="qui-toolsframe qv-has-tab-row" id="assets-tab-container" style="height:100%; border-right: 1px solid #D9D9D9;">
-
+        <div
+            class="qui-toolsframe qv-has-tab-row"
+            id="assets-tab-container"
+            style="height:100%; border-right: 1px solid #D9D9D9;"
+        >
             <header id="toolbox-header">
                 <div class="name-container">
                     <h1 class="toolbox-tab-name">Qlik Studio</h1>
-                    <button class="collapse-button" tabindex="-1" q-title-translation="Common.Close" x-click="assets.closeActiveTab()" title="Close">
+                    <button
+                        class="collapse-button"
+                        tabindex="-1"
+                        q-title-translation="Common.Close"
+                        x-click="assets.closeActiveTab()"
+                        title="Close"
+                    >
 					<span class="lui-fade-button__icon  lui-icon lui-icon--search"></span>
 					</button>
                 </div>
@@ -14,8 +23,18 @@
                         <div class="frame lui-bg-inverse">
                             <div class="lui-search lui-search--inverse">
                                 <span class="lui-search__search-icon"></span>
-                                <input class="lui-search__input" maxlength="255" spellcheck="false" type="text" placeholder="Search">
-                                <span class="asset-search-panel-clear-search lui-search__clear-icon x-hide" x-click="onClear();" title="Clear"></span>
+                                <input
+                                    class="lui-search__input"
+                                    maxlength="255"
+                                    spellcheck="false"
+                                    type="text"
+                                    placeholder="Search"
+                                >
+                                <span
+                                    class="asset-search-panel-clear-search lui-search__clear-icon x-hide"
+                                    x-click="onClear();"
+                                    title="Clear"
+                                ></span>
                             </div>
                         </div>
                     </div>
@@ -32,14 +51,18 @@
             <div class="tab-items-container" style="width:200px" ;>
                 <div class="assets-tab">
                     <section class="qui-toolssectionframe ui-accordion ui-widget ui-helper-reset" style="height: 100%">
-                        <header class="ui-accordion-header ui-corner-top ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active">
+                        <header
+                            class="ui-accordion-header ui-corner-top ui-state-default ui-accordion-icons ui-accordion-header-active ui-state-active"
+                        >
                             <div class="qas-assets-header-dimension"></div>
                             <div class="header-content">
                                 <h2 class="section-name" q-translation="Common.Dimensions">Dimensions</h2>
                             </div>
                         </header>
-                        <div class="assets-section-items ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content ui-accordion-content-active"
-                            style="height: calc(50% - 38px); overflow: auto;">
+                        <div
+                            class="assets-section-items ui-accordion-content ui-corner-bottom ui-helper-reset ui-widget-content ui-accordion-content-active"
+                            style="height: calc(50% - 38px); overflow: auto;"
+                        >
                             <ul>
                                 <li ng-repeat="item in model.qDimensionList"
                                     ng-if="!item.selected && (model.selectedTable === 'All' || item.qSrcTables.indexOf(model.selectedTable) > -1)"
@@ -88,12 +111,17 @@
                     <li ng-repeat="selectedDimension in model.qDimensionList"
                         ng-if="selectedDimension.selected === true"
                         class="{{'qas-assets-item in-tool-bar qas-item-type-'+selectedDimension.qType}}">
-                        <div class="lui-icon lui-list__aside qas-assets-item-icon" ng-class="clsMethods.getFieldIcon(selectedDimension)">
-                        </div>
+                        <div
+                            class="lui-icon lui-list__aside qas-assets-item-icon"
+                            ng-class="clsMethods.getFieldIcon(selectedDimension)"
+                        ></div>
                         <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
                             <span class="ng-binding">{{selectedDimension.qName}}</span>
                         </div>
-                        <div ng-click="methods.deselectField(selectedDimension)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
+                        <div
+                            ng-click="methods.deselectField(selectedDimension)"
+                            class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"
+                        ></div>
                     </li>
                 </div>
             </div>
@@ -109,14 +137,33 @@
                         <div class="lui-list__text lui-list__text--ellipsis qas-assets-item-text">
                             <span>{{selectedMeasure.qName}}</span>
                         </div>
-                        <div ng-click="methods.deselectField(selectedMeasure)" class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"></div>
+                        <div
+                            ng-click="methods.deselectField(selectedMeasure)"
+                            class="lui-icon lui-list__aside qas-assets-item-icon lui-icon--close"
+                        ></div>
                     </li>
                 </div>
             </div>
         </div>
         <div class="qas-drawing-area">
             <div class="qas-chart-area" id="analysis-studio-table"></div>
-            <div class="qas-chart-area" id="analysis-studio-chart"></div>
+            <div class="qas-chart-area" id="analysis-studio-chart" ng-if="model.chartType !== 'sparkline'"></div>
+            <div
+                class="qas-chart-area"
+                id="analysis-studio-sparkline"
+                ng-if="model.chartType === 'sparkline'"
+            >
+                <table id=""table-sparkline>
+                    <thead>
+                        <tr>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <div class="qv-panel-properties" style="height:100%; width: 50px; max-width: 50px; min-width: 50px">

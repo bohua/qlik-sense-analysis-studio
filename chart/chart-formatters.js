@@ -33,7 +33,7 @@ define([
                 template = LineTemplate;
                 break;
         }
-        return Object.assign({}, template);
+        return JSON.parse(JSON.stringify(template));
     }
     
     function defaultFormatter(template, selectedDimensions, selectedMeasures, data){
@@ -74,9 +74,14 @@ define([
         return template;
     }
 
+    function sparklineFormatter(){
+
+    }
+
     var formatters = {
         defaultFormatter: defaultFormatter,
-        pieFormatter: pieFormatter
+        pieFormatter: pieFormatter,
+        sparklineFormatter: sparklineFormatter
     };
     
     return {
